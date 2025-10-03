@@ -20,6 +20,7 @@
     "start-all:docker": "./scripts/start-all.sh docker",
     "start-all:local": "./scripts/start-all.sh local",
     "start-local-only": "./scripts/start-local-only.sh",
+    "start-local-only:verbose": "./scripts/start-local-only.sh --verbose",
     "start-local-temporal": "AUTO_TEMPORAL=true ./scripts/start-local-only.sh",
     "start-local-mock": "MOCK_SERVICES=true ./scripts/start-local-only.sh",
     "stop-all": "./scripts/stop-all.sh",
