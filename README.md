@@ -6,16 +6,19 @@ A multi-language AI agent orchestration platform using Temporal workflows. This 
 
 Complete the following tasks in order:
 
-1. **Fix the chat response to only show the response text** ✅
+1. **Fix the chat response to only show the response text**
+
    - Ensure the frontend chat interface displays clean, readable text instead of raw JSON
    - Parse response objects properly to extract the meaningful content
 
 2. **Ensure the model receives all previous messages as input for future messages**
+
    - Implement conversation history/context management
    - Pass previous chat messages to the LLM for better conversational flow
    - Maintain context across multiple interactions
 
 3. **Ensure that the model uses files in its response**
+
    - Verify file upload functionality works end-to-end
    - Confirm uploaded files are processed and referenced in agent responses
    - Test file content integration in LLM responses
@@ -29,7 +32,7 @@ Complete the following tasks in order:
 
 ```
 temporal-agent/
-├── py_version/          # Python implementation (original)
+├── py_version/          # Python implementation
 ├── ts_version/          # TypeScript implementation
 └── README.md           # This file
 ```
@@ -37,6 +40,7 @@ temporal-agent/
 ## Overview
 
 The Temporal Agent Platform allows you to:
+
 - Create and manage AI agents with custom tools
 - Execute agent workflows using Temporal
 - Upload and process files
@@ -52,29 +56,31 @@ The original Python implementation using FastAPI, SQLAlchemy, and Temporal Pytho
 ## Prerequisites
 
 - Python 3.9+
-- PostgreSQL 12+
-- Redis 6+
 - Temporal CLI (optional, for local development)
 
 ## Setup
 
 1. **Navigate to Python directory:**
+
    ```bash
    cd py_version
    ```
 
 2. **Create virtual environment:**
+
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
 3. **Install dependencies:**
+
    ```bash
    pip install -r requirements.txt
    ```
 
 4. **Set up environment variables:**
+
    ```bash
    cp .env.example .env
    # Edit .env with your API keys and configuration
@@ -88,12 +94,14 @@ The original Python implementation using FastAPI, SQLAlchemy, and Temporal Pytho
 ## Running Python Version
 
 ### Option 1: With Docker Compose (Recommended)
+
 ```bash
 docker-compose up -d
 ```
 
 ### Option 2: Manual Setup
-1. Start external services (PostgreSQL, Redis, Temporal)
+
+1. Start external services (Temporal)
 2. Start the API server:
    ```bash
    uvicorn src.main:app --reload --port 8000
@@ -104,6 +112,7 @@ docker-compose up -d
    ```
 
 ### API Documentation
+
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
 
@@ -117,30 +126,32 @@ Modern TypeScript implementation with React frontend, tRPC API, and enhanced dev
 
 - Node.js 18+
 - npm or yarn
-- PostgreSQL 12+ (optional, can use mocked services)
-- Redis 6+ (optional, can use mocked services)
 - Temporal CLI (optional, auto-started if available)
 
 ## Setup
 
 1. **Navigate to TypeScript directory:**
+
    ```bash
    cd ts_version
    ```
 
 2. **Install dependencies:**
+
    ```bash
    npm install
    cd frontend && npm install && cd ..
    ```
 
 3. **Set up environment variables:**
+
    ```bash
    cp .env.example .env.development
    # Edit .env.development with your API keys
    ```
 
    **Required environment variables:**
+
    ```env
    OPENAI_API_KEY=sk-your-openai-api-key-here
    TRELLIS_API_KEY=your-trellis-api-key-here  # For file uploads
@@ -149,12 +160,15 @@ Modern TypeScript implementation with React frontend, tRPC API, and enhanced dev
 ## Running TypeScript Version
 
 ### Option 1: Local Development (Recommended)
+
 Automatically starts all services with smart cleanup:
+
 ```bash
 npm run start-local-only
 ```
 
 This command will:
+
 - Clean up any existing processes
 - Load environment variables from `.env.development`
 - Start local Temporal server (if Temporal CLI available)
@@ -163,16 +177,18 @@ This command will:
 - Start React frontend on port 3000
 
 ### Option 2: With Docker Compose
+
 ```bash
 docker-compose -f docker-compose.dev.yml up -d
 ```
 
 ### Option 3: Manual Setup
+
 ```bash
 # Terminal 1 - Backend
 npm run dev
 
-# Terminal 2 - Temporal Worker  
+# Terminal 2 - Temporal Worker
 npm run temporal:worker
 
 # Terminal 3 - Frontend
@@ -180,6 +196,7 @@ cd frontend && npm start
 ```
 
 ### Option 4: Mock Services (No External Dependencies)
+
 ```bash
 MOCK_SERVICES=true npm run start-local-only
 ```
@@ -243,104 +260,30 @@ Both versions support mocked services for development without external dependenc
 - **Python**: Set `MOCK_SERVICES=true` in `.env`
 - **TypeScript**: Run with `MOCK_SERVICES=true npm run start-local-only`
 
----
+# Helpful Installation Links
 
-# Features
+## Prerequisites Installation
 
-## Core Functionality
-- ✅ AI Agent creation and management
-- ✅ Custom tool integration
-- ✅ File upload and processing
-- ✅ Temporal workflow orchestration
-- ✅ Multi-LLM provider support
-- ✅ Real-time chat interface (TypeScript only)
+### Node.js and npm
 
-## TypeScript Version Enhancements
-- 🎨 Modern React frontend with chat interface
-- ⚡ tRPC for type-safe APIs
-- 🔧 Enhanced developer tools and scripts
-- 🐳 Docker-free local development option
-- 📊 Comprehensive test coverage
-- 🚀 Automated service management
+- **Official Download**: https://nodejs.org/
+- **Using Homebrew (macOS)**: `brew install node`
+- **Using Package Managers**:
+  - Ubuntu/Debian: `sudo apt update && sudo apt install nodejs npm`
+  - CentOS/RHEL: `sudo yum install nodejs npm`
+- **Version Managers**:
+  - **nvm** (recommended): https://github.com/nvm-sh/nvm
+  - **fnm** (fast): https://github.com/Schniz/fnm
 
-## Python Version Features
-- 🐍 FastAPI with automatic OpenAPI docs
-- 🗄️ SQLAlchemy ORM with Alembic migrations
-- 🔍 Comprehensive logging and monitoring
-- 🐳 Full Docker Compose setup
+### Temporal CLI
 
----
+- **Official Installation Guide**: https://docs.temporal.io/cli
+- **Homebrew (macOS)**: `brew install temporal`
+- **Direct Download**: https://github.com/temporalio/cli/releases
+- **Temporal Cloud**: https://cloud.temporal.io/ (managed service)
 
-# Development
+## Additional Resources
 
-## Project Architecture
+### Documentation
 
-Both versions follow similar patterns:
-- **API Layer**: FastAPI (Python) / tRPC (TypeScript)
-- **Workflow Engine**: Temporal
-- **Database**: PostgreSQL (optional)
-- **Cache**: Redis (optional)
-- **Frontend**: Streamlit (Python) / React (TypeScript)
-
-## Testing
-
-### Python
-```bash
-cd py_version
-pytest tests/ -v --cov=src
-```
-
-### TypeScript
-```bash
-cd ts_version
-npm test              # Run tests
-npm run test:coverage # With coverage report
-```
-
-## Contributing
-
-1. Choose your preferred implementation (Python or TypeScript)
-2. Follow the setup instructions above
-3. Make your changes
-4. Run tests to ensure everything works
-5. Submit a pull request
-
----
-
-# Troubleshooting
-
-## Common Issues
-
-### Port Conflicts
-If you get port conflicts, check what's running:
-```bash
-lsof -i :3000  # Frontend
-lsof -i :8000  # Backend
-lsof -i :7233  # Temporal
-```
-
-### Environment Variables
-Make sure your `.env` files have real API keys, not placeholder values.
-
-### Docker Issues (TypeScript)
-The TypeScript version is designed to work without Docker. Use the local development option:
-```bash
-npm run start-local-only
-```
-
-### Temporal Connection
-If Temporal connection fails, either:
-1. Install Temporal CLI: `brew install temporal`
-2. Run with mocked services: `MOCK_SERVICES=true`
-
-## Getting Help
-
-- Check the logs in the `logs/` directory
-- Use the status command: `./scripts/stop-all.sh status` (TypeScript)
-- Review the API documentation at `/docs` endpoint
-
----
-
-# License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+- **Temporal Documentation**: https://docs.temporal.io/
