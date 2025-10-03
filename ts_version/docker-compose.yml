@@ -1,0 +1,117 @@
+# Development Docker Compose
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      target: development
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TASK_QUEUE=agent-task-queue-dev
+    env_file:
+      - .env.development
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./logs:/app/logs
+    depends_on:
+      - temporal
+    networks:
+      - temporal-agent-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  temporal:
+    image: temporalio/auto-setup:1.22.0
+    ports:
+      - "7233:7233"
+      - "8233:8233"  # Web UI
+    environment:
+      - DB=postgresql
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
+      - POSTGRES_SEEDS=postgres
+      - DYNAMIC_CONFIG_FILE_PATH=config/dynamicconfig/development.yaml
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./docker/temporal/dynamicconfig:/etc/temporal/config/dynamicconfig
+    networks:
+      - temporal-agent-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "tctl", "cluster", "health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  postgres:
+    image: postgres:13-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: temporal
+      POSTGRES_USER: temporal
+      POSTGRES_PASSWORD: temporal
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    networks:
+      - temporal-agent-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U temporal"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  temporal-web:
+    image: temporalio/web:1.15.0
+    ports:
+      - "8088:8088"
+    environment:
+      - TEMPORAL_GRPC_ENDPOINT=temporal:7233
+      - TEMPORAL_PERMIT_WRITE_API=true
+    depends_on:
+      - temporal
+    networks:
+      - temporal-agent-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data_dev:/data
+    networks:
+      - temporal-agent-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  postgres_data_dev:
+    driver: local
+  redis_data_dev:
+    driver: local
+
+networks:
+  temporal-agent-network:
+    driver: bridge

@@ -1,0 +1,38 @@
+# Temporal development configuration
+
+# Enable detailed logging
+system.enableLoggerKey:
+  - value: true
+
+# Force refresh search attributes
+system.forceSearchAttributesCacheRefreshOnRead:
+  - value: true
+
+# Enable workflow update features
+frontend.enableUpdateWorkflowExecution:
+  - value: true
+
+frontend.enableUpdateWorkflowExecutionAsyncAccepted:
+  - value: true
+
+# Development-friendly timeouts
+system.defaultWorkflowTaskTimeout:
+  - value: 60s
+
+system.defaultActivityTaskTimeout:
+  - value: 30s
+
+# History service settings
+history.defaultWorkflowTaskTimeout:
+  - value: 60s
+
+history.defaultActivityTaskTimeout:
+  - value: 30s
+
+# Worker settings
+worker.buildIdScavengerEnabled:
+  - value: true
+
+# Visibility settings
+visibility.enableManualInitialization:
+  - value: false
