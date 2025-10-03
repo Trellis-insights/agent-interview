@@ -157,6 +157,12 @@ Modern TypeScript implementation with React frontend, tRPC API, and enhanced dev
    TRELLIS_API_KEY=your-trellis-api-key-here  # For file uploads
    ```
 
+   **⚠️ For Quick Testing Without API Keys:**
+   ```bash
+   # Skip API key setup and use mocked services
+   MOCK_SERVICES=true npm run start-local-only
+   ```
+
 ## Running TypeScript Version
 
 ### Option 1: Local Development (Recommended)

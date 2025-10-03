@@ -50,7 +50,7 @@ check_port() {
 wait_for_service() {
     local service_name=$1
     local url=$2
-    local max_attempts=15
+    local max_attempts=30  # Increased timeout for first-time TypeScript compilation
     local attempt=1
     
     log_info "Waiting for $service_name to be ready..."
@@ -299,8 +299,14 @@ start_local_only() {
     
     log_info "Starting backend services..."
     # Start backend in background (inherits exported environment variables)
-    npm run dev > logs/backend.log 2>&1 &
-    BACKEND_PID=$!
+    if [[ "${VERBOSE_LOGS:-false}" == "true" ]]; then
+        log_info "Starting backend with verbose logging..."
+        npm run dev 2>&1 | tee logs/backend.log &
+        BACKEND_PID=$!
+    else
+        npm run dev > logs/backend.log 2>&1 &
+        BACKEND_PID=$!
+    fi
     echo $BACKEND_PID > logs/backend.pid
     log_info "Backend started with PID: $BACKEND_PID"
     
@@ -392,12 +398,16 @@ start_local_only() {
 
 # Display usage
 show_usage() {
-    echo "Usage: $0"
+    echo "Usage: $0 [OPTIONS]"
     echo ""
     echo "This script automatically:"
     echo "  - Stops any existing local processes (via stop-all.sh local)"
     echo "  - Loads environment variables from .env files"
     echo "  - Starts all services with proper configuration"
+    echo ""
+    echo "Options:"
+    echo "  --verbose, --logs, -v  Show real-time logs during startup (helpful for debugging)"
+    echo "  --help, -h             Show this help message"
     echo ""
     echo "Environment Variables:"
     echo "  MOCK_SERVICES=true     Run with mocked services (no external dependencies)"
@@ -406,8 +416,9 @@ show_usage() {
     echo ""
     echo "Examples:"
     echo "  $0                                    # Start with auto Temporal + external PostgreSQL/Redis"
+    echo "  $0 --verbose                          # Start with real-time log output"
     echo "  MOCK_SERVICES=true $0                 # Start with mocked services only"
-    echo "  AUTO_TEMPORAL=false $0                # Start without auto Temporal"
+    echo "  AUTO_TEMPORAL=false $0 -v             # Start without auto Temporal, show logs"
     echo "  AUTO_TEMPORAL=false MOCK_SERVICES=true $0  # Pure manual mode"
     echo ""
     echo "Prerequisites:"
@@ -436,6 +447,10 @@ main() {
         start)
             check_requirements
             start_local_only
+            ;;
+        --verbose|--logs|-v)
+            check_requirements
+            VERBOSE_LOGS=true start_local_only
             ;;
         -h|--help|help)
             show_usage
