@@ -139,8 +139,14 @@ Modern TypeScript implementation with React frontend, tRPC API, and enhanced dev
 2. **Install dependencies:**
 
    ```bash
+   # Install root dependencies
    npm install
+   
+   # Install frontend dependencies
    cd frontend && npm install && cd ..
+   
+   # Verify tsx is available (should show version number)
+   npx tsx --version
    ```
 
 3. **Set up environment variables:**
